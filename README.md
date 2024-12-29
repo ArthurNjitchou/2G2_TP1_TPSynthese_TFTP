@@ -2,7 +2,7 @@
 ## Authors: NJITCHOU Arthur & HAZAN Justine
 
 ## Description
-This project implements a Trivial File Transfer Protocol (TFTP) client in C, a client program capable of exchanging files using the Trivial File Transfer Protocol (TFTP). It allows users to download (GET) and upload (PUT) files to a TFTP server over UDP. The client supports optional block size configuration for data transfer.
+This work implements a Trivial File Transfer Protocol (TFTP) client in C, a client program capable of exchanging files using the Trivial File Transfer Protocol (TFTP). It allows users to download (GET) and upload (PUT) files to a TFTP server over UDP. The client supports optional block size configuration for data transfer.
 
 ## Features
 
