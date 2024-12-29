@@ -31,6 +31,15 @@ int main(int argc, char *argv[]) {
     char *blocksizeValue = argv[5];  // Blocksize value
     char *mode = "octet";  // Mode set to "octet"
 
+    // UDP client configuration
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;  // Datagram mode (UDP)
+    if ((so = getaddrinfo(server, PORT, &hints, &serverInfo)) != 0) {
+        perror("Client: 'getaddrinfo' error\n");
+        exit(EXIT_FAILURE);
+    }
+
     
 
     return 0;
