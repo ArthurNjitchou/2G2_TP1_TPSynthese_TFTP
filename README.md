@@ -22,12 +22,16 @@ This project implements a Trivial File Transfer Protocol (TFTP) client in C, a c
 ### Installation
 
 1. Clone the repository:
+```bash
    git clone <our-repository-url>
    cd <repository-directory>
+```
    
 
 2. Compile the code:
+```bash
    gcc -o function function.c
+```
    
 
 ### Usage
@@ -38,7 +42,7 @@ Run the TFTP client with the following commands:
 
 To download a file from a TFTP server:
 ```bash
-./tftp_client gettftp <server-ip> <file-name> [-blocksize <value>]
+./function gettftp <server-ip> <file-name> [-blocksize <value>]
 ```
 - `<server-ip>`: The IP address of the TFTP server.
 - `<file-name>`: The name of the file to download.
@@ -48,7 +52,7 @@ To download a file from a TFTP server:
 
 To upload a file to a TFTP server:
 ```bash
-./tftp_client puttftp <server-ip> <file-name>
+./function puttftp <server-ip> <file-name>
 ```
 - `<server-ip>`: The IP address of the TFTP server.
 - `<file-name>`: The name of the file to upload.
@@ -57,12 +61,12 @@ To upload a file to a TFTP server:
 
 To download a file named `example.txt` from a TFTP server at IP `192.168.1.1`:
 ```bash
-./tftp_client gettftp 192.168.1.1 example.txt
+./function gettftp 192.168.1.1 example.txt
 ```
 
 To upload a file named `example.txt` to the same server:
 ```bash
-./tftp_client puttftp 192.168.1.1 example.txt
+./function puttftp 192.168.1.1 example.txt
 ```
 
 ## Code Structure
@@ -71,31 +75,9 @@ To upload a file named `example.txt` to the same server:
 - **Read Request (RRQ)**: Constructs a read request packet and handles incoming data.
 - **Write Request (WRQ)**: Constructs a write request packet and manages file uploads.
 
-## Error Handling
 
-The client includes error handling for:
-- Socket creation failures.
-- Data transmission issues.
-- File handling errors.
-
-## Future Improvements
-
-- Implement additional options for TFTP (e.g., timeout settings).
-- Enhance error handling to provide more detailed feedback.
-- Add support for other modes (e.g., ASCII mode).
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Acknowledgments
 
 - This project is inspired by the TFTP protocol specifications defined in [RFC 1350](https://tools.ietf.org/html/rfc1350).
 
-
-
-For questions or contributions, please contact [Your Name] at [Your Email].
-
----
-
-Feel free to customize any sections to better fit your project or add any additional information that may be relevant!
