@@ -127,7 +127,82 @@ int main(int argc, char *argv[]) {
         printf("CLIENT: File transfer complete\n");
     }
 
-    
+    // Code for puttftp (uploading file)
+    if (strcmp(argv[1], "puttftp") == 0) {
+        // ------ Construct a Write Request (WRQ) and send to the server ------
+        
+        // Building the WRQ (Write Request)
+        char *WRQ;
+        int len = strlen(file) + strlen(mode) + 4;
+        WRQ = malloc(len);
+        WRQ[0] = 0;
+        WRQ[1] = 2; // Opcode for WRQ
+        strcpy(WRQ + 2, file);
+        WRQ[2 + strlen(file)] = 0;
+        strcpy(WRQ + 3 + strlen(file), mode);
+        WRQ[3 + strlen(file) + strlen(mode)] = 0;
+
+        // Send the WRQ to the server
+        if ((messageLength = sendto(sockfd, WRQ, len, 0, (struct sockaddr *) cur->ai_addr, cur->ai_addrlen)) == -1) {
+            perror("Client: 'sendto WRQ' error\n");
+            exit(EXIT_FAILURE);
+        }
+        printf("CLIENT: Sent WRQ of %d bytes to the server\n", messageLength);
+
+        // ------ Wait for acknowledgment from the server ------
+        buf = malloc(BUFSIZE);
+        if ((messageLength = recvfrom(sockfd, buf, BUFSIZE, 0, (struct sockaddr *) &addr, &slen)) == -1) {
+            perror("Client: 'recvfrom' error\n");
+            exit(EXIT_FAILURE);
+        }
+        if (*(buf + 1) == 5) {
+            perror("Client: The server returned an error message\n");
+            exit(EXIT_FAILURE);
+        }
+        printf("CLIENT: Acknowledgment for WRQ received from server: %d%d|%d%d\n", *(buf), *(buf + 1), *(buf + 2), *(buf + 3));
+
+        // ------ Prepare the file for upload ------
+        FILE *fileToSend = fopen(file, "rb");  // Open file for uploading
+        if (fileToSend == NULL) {
+            perror("CLIENT: Unable to open the file to send\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // ------ Send the file ------
+        u_int16_t blockNumber = 1;
+        char buffer[MAXDATA];
+        size_t n = MAXDATA;
+        do {
+            // Read a chunk of the file
+            n = fread(buffer, 1, MAXDATA, fileToSend);
+            buffer[n] = '\0';
+            char *packet = malloc(n + 4);
+            packet[0] = 0;
+            packet[1] = 3;  // Opcode for DATA packet
+            packet[2] = 0;
+            packet[3] = blockNumber;
+            strcpy(packet + 4, buffer);
+
+            // Send the data packet
+            if ((messageLength = sendto(sockfd, packet, n + 4, 0, (struct sockaddr *) &addr, slen)) == -1) {
+                perror("Client: 'sendto DATA' error\n");
+                exit(EXIT_FAILURE);
+            }
+            printf("CLIENT: Sent packet number %d of %d bytes of data\n", blockNumber, messageLength - 4);
+
+            // ------ Wait for acknowledgment from the server ------
+            buf = malloc(BUFSIZE);
+            if ((messageLength = recvfrom(sockfd, buf, BUFSIZE, 0, (struct sockaddr *) &addr, &slen)) == -1) {
+                perror("Client: 'recvfrom' error\n");
+                exit(EXIT_FAILURE);
+            }
+            printf("CLIENT: Acknowledgment for packet %d from server: %d%d|%d%d\n", *(buf + 3), *(buf), *(buf + 1), *(buf + 2), *(buf + 3));
+            blockNumber += 1;
+        } while (n == MAXDATA);  // Continue until file is fully sent
+
+        fclose(fileToSend);
+        printf("CLIENT: File transfer to the server completed\n");
+    }
 
     return 0;
 }
