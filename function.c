@@ -40,6 +40,20 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    // Socket creation
+    for (cur = serverInfo; cur != NULL; cur = cur->ai_next) {
+        if ((sockfd = socket(cur->ai_family, cur->ai_socktype, cur->ai_protocol)) == -1) {
+            perror("Client: 'socket' error\n");
+            continue;
+        }
+        break;
+    }
+
+    if (cur == NULL) {
+        fprintf(stderr, "Client: Unable to create a socket\n");
+        return 2;
+    }
+
     
 
     return 0;
